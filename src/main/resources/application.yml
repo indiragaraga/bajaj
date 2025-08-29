@@ -1,0 +1,27 @@
+spring:
+  main:
+    web-application-type: none  # no web server; runs and exits
+
+app:
+  base-url: "https://bfhldevapigw.healthrx.co.in"
+  name: "Indira Garaga"         
+  reg-no: "22BCE3891"        
+  email: "garaga.indira2022@vitstudent.ac.in"
+  final-sql: >
+   WITH filtered AS (
+     SELECT * FROM PAYMENTS WHERE DAY(PAYMENT_TIME) <> 1
+   ), max_amt AS (
+     SELECT MAX(AMOUNT) AS max_amount FROM filtered
+   )
+   SELECT 
+     f.AMOUNT AS SALARY,
+     CONCAT(e.FIRST_NAME, ' ', e.LAST_NAME) AS NAME,
+     TIMESTAMPDIFF(YEAR, e.DOB, DATE(f.PAYMENT_TIME)) AS AGE,
+     d.DEPARTMENT_NAME
+   FROM filtered f
+   JOIN max_amt m    ON f.AMOUNT = m.max_amount
+   JOIN EMPLOYEE e   ON e.EMP_ID = f.EMP_ID
+   JOIN DEPARTMENT d ON d.DEPARTMENT_ID = e.DEPARTMENT;  
+
+  
+    
